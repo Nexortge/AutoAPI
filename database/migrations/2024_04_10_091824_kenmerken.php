@@ -13,12 +13,8 @@ return new class extends Migration
     {
         Schema::create('kenmerken', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('Auto_id');
-            $table->string('Brandstof_type');
-            $table->date('Eerste_bouwjaar');
+            $table->string('brandstof_type');
 
-
-            $table->foreign('Auto_id')->references('id')->on('autos')->onDelete('cascade');
 
         });
     }
