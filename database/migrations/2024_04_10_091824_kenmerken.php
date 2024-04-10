@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('kenmerken', function (Blueprint $table) {
             $table->id();
             $table->string('brandstof_type');
-
-
         });
     }
 

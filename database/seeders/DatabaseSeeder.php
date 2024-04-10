@@ -15,8 +15,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            AutoSeeder::class,
             KenmerkenSeeder::class,
+            AutoSeeder::class,
+
         ]);
     }
 }
