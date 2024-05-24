@@ -10,18 +10,13 @@ use Illuminate\Support\Facades\Log;
 
 class AutoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function index()
     {
         Log::info('Auto index methode aangeroepen');
         return Auto::All();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         Log::info('Auto store methode aangeroepen met data: ', $request->all());
@@ -44,9 +39,6 @@ class AutoController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Auto $auto)
     {
         Log::info('Auto show methode aangeroepen voor auto ID: ' . $auto->id);
@@ -54,9 +46,6 @@ class AutoController extends Controller
             ->header('Content-Type','application/json');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Auto $auto)
     {
         Log::info('Auto update methode aangeroepen voor auto ID: ' . $auto->id . ' met data: ', $request->all());
@@ -75,9 +64,7 @@ class AutoController extends Controller
         return $auto;
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Auto $auto)
     {
         Log::info('Auto destroy methode aangeroepen voor auto ID: ' . $auto->id);
