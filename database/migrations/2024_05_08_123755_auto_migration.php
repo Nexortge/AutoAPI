@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('merk');
             $table->unsignedBigInteger('brandstof_id');
 
-            $table->foreign('brandstof_id')->references('id')->on('brandstoftype')->onDelete('cascade');
+            $table->foreign('brandstof_id')->references('id')->on('kenmerken')->onDelete('cascade');
 
         });
     }

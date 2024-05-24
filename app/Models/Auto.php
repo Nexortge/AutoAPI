@@ -9,6 +9,6 @@ class Auto extends Model
 {
     use HasFactory;
     public $table = 'autos';
-    protected $fillable = ['naam', 'merk'];
+    protected $fillable = ['naam', 'merk', 'brandstof_id'];
     public $timestamps = false;
 }

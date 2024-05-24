@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auto;
+use App\Models\Kenmerken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,6 +25,7 @@ class AutoController extends Controller
         $validator = Validator::make($request->all(), [
             'naam' => 'required',
             'merk' => 'required',
+            'brandstof_id' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -82,12 +84,18 @@ class AutoController extends Controller
                         ->header('Content-Type', 'application/json');
             }
         }
+
         else if($request->has('merk')) {
             return Auto::where('merk', $request->merk)->get();
         }
 
         else {
-            $auto = Auto::all();
+            $auto = Auto::All();
+            foreach ($auto as $a) {
+                $brandstof = Kenmerken::where('id', $a->brandstof_id);
+                $a->brandstof = $brandstof->get('brandstof_type');
+            }
+
             return response($auto, 200)
                 ->header('Content-Type','application/json');
         }
