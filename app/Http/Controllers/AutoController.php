@@ -7,6 +7,7 @@ use App\Models\Kenmerken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\AuthenticationController;
 
 class AutoController extends Controller
 {
@@ -19,7 +20,9 @@ class AutoController extends Controller
 
     public function store(Request $request)
     {
-        Log::info('Auto store methode aangeroepen met data: ', $request->all());
+        // Delete the current token
+        $request->user()->currentAccessToken()->delete();
+        Log::info('Auto store', ['ip' => $request->ip(), 'data' => $request->all()]);
 
         $validator = Validator::make($request->all(), [
             'naam' => 'required',
@@ -29,13 +32,26 @@ class AutoController extends Controller
 
         if ($validator->fails()) {
             Log::warning('Auto store validatie gefaald: ', $validator->errors()->all());
-            return response('{"Foutmelding":"Data niet correct"}', 400)
+            $content = [
+                'success' => false,
+                'data' => $request->all(),
+                'foutmelding' => 'Data niet correct',
+                'access_token' => auth()->user()->createToken('API Token')->plainTextToken,
+                'token_type' => 'Bearer',
+            ];
+            return response()->json($content, 400)
                 ->header('Content-Type','application/json');
         }
         else {
             $auto = Auto::create($request->all());
             Log::info('Nieuwe auto aangemaakt: ', $auto->toArray());
-            return $auto;
+            $content = [
+                'success' => true,
+                'data' => $auto,
+                'access_token' => auth()->user()->createToken('API Token')->plainTextToken,
+                'token_type' => 'Bearer',
+            ];
+            return response()->json($content, 201);
         }
     }
 
@@ -65,13 +81,33 @@ class AutoController extends Controller
     }
 
 
-    public function destroy(Auto $auto)
+    public function destroy(Request $request, $id)
     {
-        Log::info('Auto destroy methode aangeroepen voor auto ID: ' . $auto->id);
-        $auto->delete();
-        Log::info('Auto verwijderd met ID: ' . $auto->id);
-        return response('{"Succes":"Auto verwijderd"}', 200)
-            ->header('Content-Type','application/json');
+        // Delete the current token
+        $request->user()->currentAccessToken()->delete();
+        Log::info('Auto destroy', ['ip' => $request->ip(), 'data' => $request->all()]);
+
+        $auto = Auto::find($id);
+        if ($auto) {
+            $auto->delete();
+            Log::info('Auto verwijderd: ', ['id' => $id]);
+            $content = [
+                'success' => true,
+                'message' => 'Auto verwijderd',
+                'access_token' => auth()->user()->createToken('API Token')->plainTextToken,
+                'token_type' => 'Bearer',
+            ];
+            return response()->json($content, 200);
+        } else {
+            Log::warning('Auto niet gevonden: ', ['id' => $id]);
+            $content = [
+                'success' => false,
+                'message' => 'Auto niet gevonden',
+                'access_token' => auth()->user()->createToken('API Token')->plainTextToken,
+                'token_type' => 'Bearer',
+            ];
+            return response()->json($content, 404);
+        }
     }
 
     public function showParameters(Request $request)
